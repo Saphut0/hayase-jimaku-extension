@@ -4,8 +4,6 @@ export default {
   },
 
  async single(query, options) {
-  console.log("query:", JSON.stringify(query));
-  console.log("options:", JSON.stringify(options));
     const apiKey = options?.apiKey;
     if (!apiKey) return [];
 
