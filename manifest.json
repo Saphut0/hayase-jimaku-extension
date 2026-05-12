@@ -10,6 +10,9 @@
     "media": "sub",
     "url": "aHR0cHM6Ly9qaW1ha3UuY2M=",
     "code": "https://saphut0.github.io/hayase-jimaku-extension/jimaku.js",
+    "hosts": [
+      "https://jimaku.cc"
+    ],
     "options": {
       "apiKey": {
         "type": "string",
