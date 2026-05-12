@@ -5,9 +5,7 @@
     "name": "Jimaku Subs",
     "version": "1.0.0",
     "type": "subtitle",
-    "accuracy": "high",
-    "languages": ["JP"],
-    "media": "sub",
+    "languages": ["ja"],
     "url": "aHR0cHM6Ly9qaW1ha3UuY2M=",
     "code": "https://saphut0.github.io/hayase-jimaku-extension/jimaku.js",
     "hosts": [
