@@ -3,16 +3,14 @@
     "manifestVersion": 2,
     "id": "jimaku",
     "name": "Jimaku Subs",
-    "description": "Japanese subtitles from Jimaku.cc",
-    "icon": "https://jimaku.cc/favicon.ico",
-    "version": "1.0.1",
+    "version": "1.0.0",
     "type": "subtitle",
-    "languages": ["ja"],
+    "accuracy": "high",
+    "media": "sub",
+    "languages": ["JP"],
     "url": "aHR0cHM6Ly9qaW1ha3UuY2M=",
+    "icon": "https://jimaku.cc/favicon.ico",
     "code": "https://saphut0.github.io/hayase-jimaku-extension/jimaku.js",
-    "hosts": [
-      "https://jimaku.cc"
-    ],
     "options": {
       "apiKey": {
         "type": "string",
