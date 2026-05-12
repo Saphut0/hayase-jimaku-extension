@@ -5,10 +5,7 @@ export default {
 
   async single(query, options) {
     const apiKey = options?.apiKey;
-
-    if (!apiKey) {
-      return undefined;
-    }
+    if (!apiKey) return [];
 
     const fetchFn = query.fetch;
     const anilistId = query.anilistId;
@@ -17,16 +14,14 @@ export default {
 
     let entryId = null;
 
-    // -----------------------------
-    // 1. Try AniList ID lookup
-    // -----------------------------
+    // -------------------------
+    // 1. AniList lookup
+    // -------------------------
     try {
       const res = await fetchFn(
         `https://jimaku.cc/api/entries?anilist_id=${anilistId}`,
         {
-          headers: {
-            Authorization: `Bearer ${apiKey}`
-          }
+          headers: { Authorization: `Bearer ${apiKey}` }
         }
       );
 
@@ -37,18 +32,16 @@ export default {
       }
     } catch (e) {}
 
-    // -----------------------------
-    // 2. Fallback: title search
-    // -----------------------------
+    // -------------------------
+    // 2. Title fallback
+    // -------------------------
     if (!entryId) {
       for (const title of titles) {
         try {
           const res = await fetchFn(
             `https://jimaku.cc/api/entries?query=${encodeURIComponent(title)}`,
             {
-              headers: {
-                Authorization: `Bearer ${apiKey}`
-              }
+              headers: { Authorization: `Bearer ${apiKey}` }
             }
           );
 
@@ -62,57 +55,47 @@ export default {
       }
     }
 
-    if (!entryId) {
-      return undefined;
-    }
+    // ❗ NEVER return undefined
+    if (!entryId) return [];
 
-    // -----------------------------
-    // 3. Fetch subtitle files
-    // -----------------------------
+    // -------------------------
+    // 3. Fetch files
+    // -------------------------
     let files = [];
 
     try {
       const res = await fetchFn(
         `https://jimaku.cc/api/entries/${entryId}/files`,
         {
-          headers: {
-            Authorization: `Bearer ${apiKey}`
-          }
+          headers: { Authorization: `Bearer ${apiKey}` }
         }
       );
 
       const json = await res.json();
 
-      // 🔥 CRITICAL FIX: ensure iterable
-      if (Array.isArray(json)) {
-        files = json;
-      } else {
-        files = [];
-      }
+      files = Array.isArray(json) ? json : [];
     } catch (e) {
-      return undefined;
+      return [];
     }
 
-    if (files.length === 0) {
-      return undefined;
-    }
+    if (files.length === 0) return [];
 
-    // -----------------------------
-    // 4. Episode filtering (safe)
-    // -----------------------------
-    const epStr = String(episode).padStart(2, "0");
+    // -------------------------
+    // 4. Episode match
+    // -------------------------
+    const ep = String(episode).padStart(2, "0");
 
     let matches = files.filter(f =>
-      f?.name?.includes(epStr)
+      f?.name?.includes(ep)
     );
 
     if (matches.length === 0) {
       matches = files;
     }
 
-    // -----------------------------
-    // 5. Final mapping (Hayase format)
-    // -----------------------------
+    // -------------------------
+    // 5. FINAL RETURN (ALWAYS ARRAY)
+    // -------------------------
     return matches
       .filter(f => f?.download_url)
       .map(f => ({
