@@ -1,20 +1,20 @@
 [
   {
     "manifestVersion": 2,
-    "id": "jimaku",
-    "name": "Jimaku Subs",
-    "version": "1.0.0",
+    "id": "jimaku-cc",
+    "name": "Jimaku",
+    "version": "1.0.2",
     "type": "subtitle",
     "accuracy": "high",
     "media": "sub",
     "languages": ["JP"],
     "url": "aHR0cHM6Ly9qaW1ha3UuY2M=",
-    "icon": "https://jimaku.cc/favicon.ico",
+    "update": "https://saphut0.github.io/hayase-jimaku-extension/index.json",
     "code": "https://saphut0.github.io/hayase-jimaku-extension/jimaku.js",
     "options": {
       "apiKey": {
         "type": "string",
-        "description": "Your Jimaku API key. Get one at https://jimaku.cc",
+        "description": "Jimaku API Key",
         "default": ""
       }
     }
