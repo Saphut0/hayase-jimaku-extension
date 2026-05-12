@@ -5,7 +5,10 @@ export default {
 
   async single(query, options) {
     const apiKey = options?.apiKey;
-    if (!apiKey) return undefined;
+
+    if (!apiKey) {
+      return undefined;
+    }
 
     const fetchFn = query.fetch;
     const anilistId = query.anilistId;
@@ -14,33 +17,43 @@ export default {
 
     let entryId = null;
 
-    // --- Try AniList ID ---
+    // -----------------------------
+    // 1. Try AniList ID lookup
+    // -----------------------------
     try {
       const res = await fetchFn(
         `https://jimaku.cc/api/entries?anilist_id=${anilistId}`,
         {
-          headers: { Authorization: `Bearer ${apiKey}` }
+          headers: {
+            Authorization: `Bearer ${apiKey}`
+          }
         }
       );
 
       const data = await res.json();
+
       if (Array.isArray(data) && data.length > 0) {
         entryId = data[0].id;
       }
     } catch (e) {}
 
-    // --- Fallback title search ---
+    // -----------------------------
+    // 2. Fallback: title search
+    // -----------------------------
     if (!entryId) {
-      for (let title of titles) {
+      for (const title of titles) {
         try {
           const res = await fetchFn(
             `https://jimaku.cc/api/entries?query=${encodeURIComponent(title)}`,
             {
-              headers: { Authorization: `Bearer ${apiKey}` }
+              headers: {
+                Authorization: `Bearer ${apiKey}`
+              }
             }
           );
 
           const data = await res.json();
+
           if (Array.isArray(data) && data.length > 0) {
             entryId = data[0].id;
             break;
@@ -49,37 +62,62 @@ export default {
       }
     }
 
-    if (!entryId) return undefined;
+    if (!entryId) {
+      return undefined;
+    }
 
-    // --- Fetch files ---
+    // -----------------------------
+    // 3. Fetch subtitle files
+    // -----------------------------
     let files = [];
+
     try {
       const res = await fetchFn(
         `https://jimaku.cc/api/entries/${entryId}/files`,
         {
-          headers: { Authorization: `Bearer ${apiKey}` }
+          headers: {
+            Authorization: `Bearer ${apiKey}`
+          }
         }
       );
 
-      files = await res.json();
+      const json = await res.json();
+
+      // 🔥 CRITICAL FIX: ensure iterable
+      if (Array.isArray(json)) {
+        files = json;
+      } else {
+        files = [];
+      }
     } catch (e) {
       return undefined;
     }
 
-    if (!Array.isArray(files)) return undefined;
+    if (files.length === 0) {
+      return undefined;
+    }
 
-    // --- Simple episode match ---
+    // -----------------------------
+    // 4. Episode filtering (safe)
+    // -----------------------------
     const epStr = String(episode).padStart(2, "0");
 
-    const matches = files.filter(f =>
-      f.name && f.name.includes(epStr)
+    let matches = files.filter(f =>
+      f?.name?.includes(epStr)
     );
 
-    const usable = matches.length > 0 ? matches : files;
+    if (matches.length === 0) {
+      matches = files;
+    }
 
-    return usable.map(f => ({
-      url: f.download_url,
-      language: "JP"
-    }));
+    // -----------------------------
+    // 5. Final mapping (Hayase format)
+    // -----------------------------
+    return matches
+      .filter(f => f?.download_url)
+      .map(f => ({
+        url: f.download_url,
+        language: "ja"
+      }));
   }
 };
