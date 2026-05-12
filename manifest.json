@@ -10,7 +10,7 @@
     "languages": ["JP", "EN"],
     "url": "aHR0cHM6Ly9qaW1ha3UuY2M=",
     "icon": "https://jimaku.cc/favicon.ico",
-    "code": "https://your-domain/jimaku.js",
+    "code": "https://Saphut0.github.io/hayase-jimaku-extension/jimaku.js",
     "options": {
       "apiKey": {
         "type": "string",
